@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Dashboard – OM SSV Girls Hostel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Tenor+Sans&family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;1,300&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --tc:#8B4A3A;--tc-deep:#6B3028;--tc-light:#D4927E;--tc-pale:#F5DDD6;
+  --sand:#E8DDD0;--sand-light:#F5EFE8;--sand-dark:#C8B8A8;
+  --linen:#FAF7F2;--linen-dark:#F0E8DF;
+  --stone:#8C8078;--stone-light:#B8AFA8;--stone-dark:#5C5048;
+  --ink:#2A2018;--ink-soft:#4A3828;
+  --sage:#7A8C72;--gold:#C4956A;--white:#FFFFFF;
+  --sidebar:230px;--shadow:0 2px 20px rgba(42,32,24,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Jost',sans-serif;background:var(--linen-dark);color:var(--ink);display:flex;min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--ink);min-height:100vh;position:fixed;left:0;top:0;bottom:0;display:flex;flex-direction:column;z-index:100;transition:transform 0.3s;}
+.sidebar-logo{padding:28px 24px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sidebar-logo .stamp{width:40px;height:40px;background:var(--tc);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.sidebar-logo .stamp span{font-family:'Libre Baskerville',serif;font-size:14px;font-weight:700;color:white;}
+.sidebar-logo .name{font-family:'Tenor Sans',sans-serif;font-size:13px;color:rgba(232,220,208,0.9);letter-spacing:0.5px;line-height:1.4;}
+.sidebar-logo .sub{font-size:10px;color:rgba(255,255,255,0.35);margin-top:3px;letter-spacing:2px;text-transform:uppercase;font-weight:300;}
+.sidebar-nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.45);font-size:12px;font-weight:400;cursor:pointer;transition:all 0.2s;margin-bottom:2px;text-decoration:none;letter-spacing:0.5px;}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,0.07);color:rgba(232,220,208,0.9);}
+.nav-item.active{background:rgba(139,74,58,0.2);color:var(--tc-pale);border-left:2px solid var(--tc);}
+.nav-item i{width:16px;text-align:center;font-size:13px;}
+.sidebar-footer{padding:16px 12px;border-top:1px solid rgba(255,255,255,0.08);}
+.logout-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;color:rgba(255,255,255,0.35);font-size:12px;cursor:pointer;transition:all 0.2s;text-decoration:none;letter-spacing:0.5px;}
+.logout-btn:hover{color:#fca5a5;background:rgba(239,68,68,0.08);}
+
+/* Mobile header */
+.mob-header{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:var(--ink);z-index:200;align-items:center;padding:0 20px;gap:14px;}
+.mob-header .m-stamp{width:34px;height:34px;background:var(--tc);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.mob-header .m-stamp span{font-family:'Libre Baskerville',serif;font-size:13px;font-weight:700;color:white;}
+.mob-header .m-title{font-family:'Tenor Sans',sans-serif;font-size:13px;color:rgba(232,220,208,0.9);letter-spacing:0.5px;flex:1;}
+.mob-toggle{background:none;border:none;color:rgba(255,255,255,0.6);font-size:18px;cursor:pointer;padding:8px;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:99;}
+.sidebar-overlay.show{display:block;}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;padding:32px 36px;}
+.page-header{margin-bottom:32px;}
+.page-header h1{font-family:'Libre Baskerville',serif;font-size:26px;font-weight:400;color:var(--ink);}
+.page-header p{font-size:13px;color:var(--stone);margin-top:5px;font-weight:300;letter-spacing:0.3px;}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(175px,1fr));gap:14px;margin-bottom:28px;}
+.stat-card{background:var(--white);border:1px solid rgba(200,184,168,0.3);padding:20px;box-shadow:var(--shadow);}
+.stat-card .s-label{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--stone);}
+.stat-card .s-value{font-family:'Libre Baskerville',serif;font-size:30px;font-weight:400;color:var(--tc);margin:8px 0 2px;line-height:1;}
+.stat-card .s-sub{font-size:11px;color:var(--stone-light);font-weight:300;}
+.stat-card .s-icon{float:right;font-size:24px;margin-top:-30px;opacity:0.6;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid rgba(200,184,168,0.3);padding:24px;box-shadow:var(--shadow);margin-bottom:20px;}
+.card-title{font-family:'Tenor Sans',sans-serif;font-size:16px;color:var(--ink);margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid rgba(200,184,168,0.3);letter-spacing:0.3px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.card-title span{font-size:12px;color:var(--stone);font-family:'Jost',sans-serif;font-weight:300;letter-spacing:0;}
+
+/* FORM */
+.fg{display:flex;flex-direction:column;gap:5px;flex:1;}
+label{font-family:'Jost',sans-serif;font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--stone);}
+input,select,textarea{padding:10px 13px;border:1px solid rgba(200,184,168,0.4);font-size:13px;font-family:'Jost',sans-serif;font-weight:300;background:var(--linen);color:var(--ink);outline:none;transition:all 0.2s;}
+input:focus,select:focus,textarea:focus{border-color:var(--tc);background:white;box-shadow:0 0 0 2px rgba(139,74,58,0.08);}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 18px;font-size:12px;font-weight:500;font-family:'Jost',sans-serif;letter-spacing:0.8px;text-transform:uppercase;cursor:pointer;border:1px solid transparent;transition:all 0.25s;}
+.btn-primary{background:var(--tc);color:white;border-color:var(--tc);}
+.btn-primary:hover{background:var(--tc-deep);}
+.btn-gold{background:var(--gold);color:white;}
+.btn-gold:hover{background:#b8865e;}
+.btn-danger{background:#c44;color:white;}
+.btn-danger:hover{background:#a22;}
+.btn-success{background:var(--sage);color:white;}
+.btn-success:hover{background:#608050;}
+.btn-sm{padding:6px 12px;font-size:11px;}
+.btn-outline{background:transparent;border-color:var(--tc);color:var(--tc);}
+.btn-outline:hover{background:var(--tc);color:white;}
+
+/* TABLE */
+.occ-table{width:100%;border-collapse:collapse;font-size:13px;}
+.occ-table th{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--stone);padding:10px 12px;text-align:left;border-bottom:1px solid rgba(200,184,168,0.4);font-weight:500;}
+.occ-table td{padding:12px;border-bottom:1px solid rgba(200,184,168,0.2);vertical-align:middle;color:var(--ink-soft);}
+.occ-table tr:last-child td{border:none;}
+.occ-bar-wrap{display:flex;align-items:center;gap:10px;}
+.occ-bar{flex:1;height:4px;background:var(--sand);overflow:hidden;}
+.occ-fill{height:100%;background:linear-gradient(90deg,var(--tc),var(--gold));transition:width 0.5s;}
+.occupied-input{width:70px;text-align:center;padding:6px 8px;}
+.badge{display:inline-block;padding:3px 10px;font-size:11px;font-weight:500;letter-spacing:0.5px;}
+.badge-green{background:rgba(122,140,114,0.12);color:var(--sage);}
+.badge-orange{background:rgba(196,149,106,0.15);color:#8B5E2A;}
+.badge-red{background:rgba(139,74,58,0.1);color:var(--tc);}
+
+/* DISH LIBRARY */
+.meals-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;}
+.meal-section{background:var(--linen);border:1px solid rgba(200,184,168,0.3);padding:18px;}
+.meal-section h4{font-family:'Tenor Sans',sans-serif;font-size:12px;color:var(--tc);margin-bottom:12px;letter-spacing:1px;text-transform:uppercase;}
+.dish-list{display:flex;flex-direction:column;gap:5px;max-height:230px;overflow-y:auto;margin-bottom:12px;}
+.dish-item{display:flex;justify-content:space-between;align-items:center;background:white;padding:8px 12px;border:1px solid rgba(200,184,168,0.2);font-size:12px;color:var(--ink-soft);}
+.dish-item button{background:none;border:none;color:#c44;cursor:pointer;font-size:12px;padding:2px 6px;transition:all 0.2s;}
+.dish-item button:hover{background:rgba(204,68,68,0.08);}
+.add-dish-row{display:flex;gap:8px;}
+.add-dish-row input{flex:1;padding:8px 10px;font-size:12px;}
+
+/* MENU */
+.today-menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:12px;margin-bottom:18px;}
+.menu-meal-card{background:var(--linen);border-left:2px solid var(--tc);padding:14px;}
+.menu-meal-card .meal-name{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:1.5px;color:var(--tc);margin-bottom:5px;}
+.menu-meal-card .dish{font-family:'Libre Baskerville',serif;font-size:15px;font-weight:400;color:var(--ink);}
+
+/* REVIEWS / COMPLAINTS */
+.item-list{display:flex;flex-direction:column;gap:10px;}
+.review-item,.complaint-item{background:var(--linen);border:1px solid rgba(200,184,168,0.3);padding:16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.item-content{flex:1;}
+.item-name{font-family:'Tenor Sans',sans-serif;font-size:14px;color:var(--ink);letter-spacing:0.3px;}
+.item-meta{font-size:11px;color:var(--stone);margin:3px 0;letter-spacing:0.3px;}
+.item-text{font-size:13px;color:var(--stone-dark);margin-top:6px;line-height:1.6;font-weight:300;font-style:italic;}
+.item-actions{display:flex;gap:6px;flex-shrink:0;}
+.status-badge{display:inline-block;padding:2px 9px;font-size:11px;font-weight:500;letter-spacing:0.5px;margin-left:8px;}
+.status-pending{background:rgba(196,149,106,0.15);color:#8B5E2A;}
+.status-resolved{background:rgba(122,140,114,0.12);color:var(--sage);}
+.status-pending-review{background:rgba(139,74,58,0.1);color:var(--tc);}
+
+/* ENQUIRY TABLE */
+.enquiry-table{width:100%;border-collapse:collapse;font-size:13px;}
+.enquiry-table th{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--stone);padding:10px 12px;text-align:left;border-bottom:1px solid rgba(200,184,168,0.4);font-weight:500;}
+.enquiry-table td{padding:11px 12px;border-bottom:1px solid rgba(200,184,168,0.15);color:var(--ink-soft);}
+.enquiry-table tr:hover td{background:var(--linen);}
+
+/* GALLERY */
+.gallery-mgmt{display:flex;flex-direction:column;gap:20px;}
+.gallery-limit-bar{background:var(--linen);border:1px solid rgba(200,184,168,0.3);padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.limit-info{display:flex;align-items:center;gap:14px;}
+.limit-circle{width:52px;height:52px;border-radius:50%;background:conic-gradient(var(--tc) calc(var(--pct)*1%), var(--sand) 0);display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.limit-circle::before{content:'';position:absolute;width:38px;height:38px;background:var(--linen);border-radius:50%;}
+.limit-circle span{position:relative;z-index:1;font-family:'Libre Baskerville',serif;font-size:12px;color:var(--tc);font-weight:700;}
+.limit-text strong{font-family:'Tenor Sans',sans-serif;font-size:14px;color:var(--ink);letter-spacing:0.3px;display:block;}
+.limit-text p{font-size:11px;color:var(--stone);font-weight:300;margin-top:2px;}
+
+.upload-zone{border:1.5px dashed rgba(200,184,168,0.6);padding:28px;text-align:center;background:var(--linen);cursor:pointer;transition:all 0.3s;position:relative;}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--tc);background:var(--tc-pale);}
+.upload-zone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-zone i.up-icon{font-size:28px;color:var(--stone-light);margin-bottom:8px;display:block;}
+.upload-zone h4{font-family:'Tenor Sans',sans-serif;font-size:14px;color:var(--ink);margin-bottom:3px;letter-spacing:0.3px;}
+.upload-zone p{font-size:12px;color:var(--stone);font-weight:300;}
+.upload-limit-note{font-size:11px;color:var(--tc);font-weight:500;margin-top:5px;}
+
+/* Gallery reorder grid */
+.gallery-reorder-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.gallery-reorder-header > div > span{font-family:'Tenor Sans',sans-serif;font-size:13px;color:var(--stone-dark);letter-spacing:0.3px;}
+.reorder-hint{font-size:11px;color:var(--stone);font-weight:300;display:flex;align-items:center;gap:6px;margin-top:4px;}
+.reorder-hint i{color:var(--tc);}
+.save-order-btn{display:none;align-items:center;gap:6px;padding:7px 16px;background:var(--tc);color:white;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;transition:all 0.25s;}
+.save-order-btn.visible{display:inline-flex;}
+.save-order-btn:hover{background:var(--tc-deep);}
+
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:12px;margin-top:4px;}
+.gallery-photo-item{position:relative;background:white;border:1px solid rgba(200,184,168,0.3);cursor:grab;user-select:none;transition:box-shadow 0.2s,opacity 0.2s;}
+.gallery-photo-item:active{cursor:grabbing;}
+.gallery-photo-item.dragging{opacity:0.35;box-shadow:0 8px 32px rgba(139,74,58,0.18);}
+.gallery-photo-item.drag-over{border:2px solid var(--tc);box-shadow:0 4px 16px rgba(139,74,58,0.15);}
+.gallery-photo-item img{width:100%;height:100px;object-fit:cover;display:block;pointer-events:none;}
+.drag-handle{position:absolute;top:6px;left:6px;z-index:2;background:rgba(42,32,24,0.55);color:white;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:11px;opacity:0;transition:opacity 0.2s;pointer-events:none;}
+.gallery-photo-item:hover .drag-handle{opacity:1;}
+.order-badge{position:absolute;top:6px;right:6px;z-index:2;background:var(--tc);color:white;font-family:'Jost',sans-serif;font-size:10px;font-weight:500;padding:2px 7px;letter-spacing:0.5px;}
+.photo-overlay{position:absolute;inset:0;background:rgba(42,32,24,0);display:flex;align-items:center;justify-content:center;transition:all 0.25s;z-index:3;}
+.gallery-photo-item:hover .photo-overlay{background:rgba(42,32,24,0.45);}
+.photo-del-btn{opacity:0;background:var(--tc);color:white;border:none;padding:6px 12px;font-size:11px;font-family:'Jost',sans-serif;font-weight:500;letter-spacing:1px;cursor:pointer;transition:opacity 0.25s;text-transform:uppercase;}
+.gallery-photo-item:hover .photo-del-btn{opacity:1;}
+.photo-label-tag{font-size:11px;color:var(--stone);padding:6px 8px;background:white;border-top:1px solid rgba(200,184,168,0.2);font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gallery-empty{padding:48px;text-align:center;color:var(--stone);font-size:13px;font-weight:300;grid-column:1/-1;}
+.gallery-empty i{font-size:32px;opacity:0.25;margin-bottom:10px;display:block;}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:white;padding:12px 18px;font-size:12px;font-family:'Jost',sans-serif;z-index:9999;transform:translateY(20px);opacity:0;transition:all 0.3s;border-left:2px solid var(--tc);letter-spacing:0.5px;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+
+/* EMPTY STATE */
+.empty-state{padding:36px;text-align:center;color:var(--stone);font-size:13px;font-weight:300;}
+.empty-state i{font-size:28px;opacity:0.3;margin-bottom:8px;display:block;}
+
+@media(max-width:900px){
+  .sidebar{transform:translateX(-230px);}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:72px 16px 24px;}
+  .mob-header{display:flex;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:600px){
+  .stats-row{grid-template-columns:1fr;}
+  .meals-grid{grid-template-columns:1fr;}
+  .gallery-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));}
+  .card{padding:16px;}
+  .main{padding:68px 12px 20px;}
+}
+</style>
+</head>
+<body>
+
+<div class="mob-header">
+  <div class="m-stamp"><span>OM</span></div>
+  <div class="m-title">Admin Dashboard</div>
+  <button class="mob-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="stamp"><span>OM</span></div>
+    <div class="name">OM SSV Girls Hostel</div>
+    <div class="sub">Admin Dashboard</div>
+  </div>
+  <div class="sidebar-nav">
+    <a class="nav-item active" onclick="showTab('overview',this)"><i class="fas fa-chart-pie"></i> Overview</a>
+    <a class="nav-item" onclick="showTab('rooms',this)"><i class="fas fa-door-open"></i> Room Occupancy</a>
+    <a class="nav-item" onclick="showTab('menu',this)"><i class="fas fa-utensils"></i> Mess Menu</a>
+    <a class="nav-item" onclick="showTab('dishes',this)"><i class="fas fa-book-open"></i> Dish Library</a>
+    <a class="nav-item" onclick="showTab('gallery',this)"><i class="fas fa-images"></i> Photo Gallery</a>
+    <a class="nav-item" onclick="showTab('reviews',this)"><i class="fas fa-star"></i> Reviews</a>
+    <a class="nav-item" onclick="showTab('complaints',this)"><i class="fas fa-exclamation-circle"></i> Complaints</a>
+    <a class="nav-item" onclick="showTab('enquiries',this)"><i class="fas fa-envelope"></i> Enquiries</a>
+    <a class="nav-item" href="/" target="_blank"><i class="fas fa-external-link-alt"></i> View Website</a>
+  </div>
+  <div class="sidebar-footer">
+    <a href="/admin_logout" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="page-header">
+    <h1>Good day, Admin</h1>
+    <p>Manage your hostel from one place. All changes update the website live.</p>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="tab-content active" id="tab-overview">
+    {% set total_vacant = namespace(v=0) %}{% set total_beds = namespace(v=0) %}
+    {% for k,r in data.rooms.items() %}{% set total_vacant.v = total_vacant.v + (r.total - r.occupied) %}{% set total_beds.v = total_beds.v + r.total %}{% endfor %}
+    <div class="stats-row">
+      <div class="stat-card"><div class="s-icon">🛏️</div><div class="s-label">Vacant Beds</div><div class="s-value">{{ total_vacant.v }}</div><div class="s-sub">of {{ total_beds.v }} total</div></div>
+      <div class="stat-card"><div class="s-icon">⭐</div><div class="s-label">Pending Reviews</div><div class="s-value">{{ data.reviews|selectattr('approved','equalto',False)|list|length }}</div><div class="s-sub">awaiting approval</div></div>
+      <div class="stat-card"><div class="s-icon">📢</div><div class="s-label">Open Complaints</div><div class="s-value">{{ data.complaints|selectattr('status','equalto','pending')|list|length }}</div><div class="s-sub">pending resolution</div></div>
+      <div class="stat-card"><div class="s-icon">📋</div><div class="s-label">Enquiries</div><div class="s-value">{{ data.enquiries|length }}</div><div class="s-sub">total received</div></div>
+      <div class="stat-card"><div class="s-icon">🖼️</div><div class="s-label">Gallery Photos</div><div class="s-value">{{ data.gallery_photos|length if data.gallery_photos else 0 }}</div><div class="s-sub">of 20 max</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Today's Menu <span>Auto-generated daily</span></div>
+      <div class="today-menu-grid">{% for meal,dish in menu.items() %}<div class="menu-meal-card"><div class="meal-name">{{ meal }}</div><div class="dish">{{ dish }}</div></div>{% endfor %}</div>
+      <button class="btn btn-gold" style="margin-top:4px" onclick="regenerateMenu()"><i class="fas fa-sync-alt"></i> Regenerate Menu</button>
+    </div>
+    <div class="card">
+      <div class="card-title">Quick Vacancy Overview</div>
+      <table class="occ-table">
+        <tr><th>Room Type</th><th>Occupied</th><th>Total</th><th>Occupancy</th><th>Status</th></tr>
+        {% for key,room in data.rooms.items() %}{% set pct = (room.occupied/room.total*100)|int %}{% set vacant = room.total - room.occupied %}
+        <tr><td><strong>{{ key.replace('_',' ').title() }}</strong></td><td>{{ room.occupied }}</td><td>{{ room.total }}</td>
+          <td><div class="occ-bar-wrap"><div class="occ-bar"><div class="occ-fill" style="width:{{ pct }}%"></div></div><span style="font-size:12px;color:var(--stone)">{{ pct }}%</span></div></td>
+          <td><span class="badge {{ 'badge-red' if vacant==0 else ('badge-orange' if vacant<3 else 'badge-green') }}">{{ vacant }} vacant</span></td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+
+  <!-- ROOMS -->
+  <div class="tab-content" id="tab-rooms">
+    <div class="card">
+      <div class="card-title">Update Room Occupancy <span>Changes reflect live on website</span></div>
+      <form id="roomForm">
+        <table class="occ-table">
+          <tr><th>Room Type</th><th>Current</th><th>Total</th><th>Vacant</th><th>Update Occupied</th></tr>
+          {% for key,room in data.rooms.items() %}{% set vacant = room.total - room.occupied %}
+          <tr><td><strong>{{ key.replace('_',' ').title() }}</strong></td><td>{{ room.occupied }}</td><td>{{ room.total }}</td>
+            <td><span class="badge {{ 'badge-red' if vacant==0 else ('badge-orange' if vacant<3 else 'badge-green') }}">{{ vacant }}</span></td>
+            <td><input type="number" class="occupied-input" name="{{ key }}" value="{{ room.occupied }}" min="0" max="{{ room.total }}"/></td></tr>
+          {% endfor %}
+        </table>
+        <div style="margin-top:20px;"><button type="button" class="btn btn-primary" onclick="updateRooms()"><i class="fas fa-save"></i> Save Changes</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MENU -->
+  <div class="tab-content" id="tab-menu">
+    <div class="card">
+      <div class="card-title">Today's Mess Menu</div>
+      <div class="today-menu-grid" id="menuGrid">{% for meal,dish in menu.items() %}<div class="menu-meal-card"><div class="meal-name">{{ meal }}</div><div class="dish" id="menu-{{ meal }}">{{ dish }}</div></div>{% endfor %}</div>
+      <button class="btn btn-gold" onclick="regenerateMenu()"><i class="fas fa-sync-alt"></i> Regenerate Today's Menu</button>
+      <p style="font-size:12px;color:var(--stone);margin-top:12px;font-weight:300;">Menu auto-generated from dish library. Add more dishes for variety.</p>
+    </div>
+  </div>
+
+  <!-- DISHES -->
+  <div class="tab-content" id="tab-dishes">
+    <div class="card">
+      <div class="card-title">Dish Library <span>Manage dishes for each meal slot</span></div>
+      <div class="meals-grid">
+        {% for meal, dishes in data.dishes.items() %}
+        <div class="meal-section">
+          <h4>{{ meal }}</h4>
+          <div class="dish-list" id="dishList-{{ meal }}">
+            {% for dish in dishes %}<div class="dish-item"><span>{{ dish }}</span><button onclick="removeDish('{{ meal }}','{{ dish }}',this.closest('.dish-item'))">✕</button></div>{% endfor %}
+          </div>
+          <div class="add-dish-row">
+            <input type="text" id="newDish-{{ meal }}" placeholder="Add dish..." onkeydown="if(event.key==='Enter')addDish('{{ meal }}')"/>
+            <button class="btn btn-primary btn-sm" onclick="addDish('{{ meal }}')"><i class="fas fa-plus"></i></button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="tab-content" id="tab-gallery">
+    <div class="card">
+      <div class="card-title">Photo Gallery <span>Drag to reorder · exact order shown on website</span></div>
+      <div class="gallery-mgmt">
+        <div class="gallery-limit-bar">
+          <div class="limit-info">
+            <div class="limit-circle" id="limitCircle" style="--pct:0"><span id="limitCount">0</span></div>
+            <div class="limit-text"><strong id="limitLabel">0 / 20 photos</strong><p id="limitDesc">Loading…</p></div>
+          </div>
+          <div style="font-size:11px;color:var(--stone);font-weight:300;text-align:right;max-width:220px;">Shown in website gallery in exact order below.<br>JPG · PNG · WEBP · Max 5MB each.</div>
+        </div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" id="photoUploadInput" accept="image/jpeg,image/png,image/webp" multiple onchange="handlePhotoUpload(this)"/>
+          <i class="fas fa-cloud-upload-alt up-icon"></i>
+          <h4>Drag & drop photos here</h4>
+          <p>or click to browse your device</p>
+          <div class="upload-limit-note" id="uploadLimitNote">You can add up to 20 photos total</div>
+        </div>
+        <div>
+          <div class="gallery-reorder-header">
+            <div><span>Current Gallery Photos</span><div class="reorder-hint"><i class="fas fa-grip-vertical"></i> Drag to reorder — order reflects on the website</div></div>
+            <button class="save-order-btn" id="saveOrderBtn" onclick="saveOrder()"><i class="fas fa-save"></i> Save Order</button>
+          </div>
+          <div class="gallery-grid" id="galleryGrid">
+            {% if data.gallery_photos %}
+              {% for photo in data.gallery_photos %}
+              <div class="gallery-photo-item" draggable="true" data-src="{{ photo.src }}" data-label="{{ photo.label }}">
+                <div class="drag-handle"><i class="fas fa-grip-vertical"></i></div>
+                <div class="order-badge">{{ loop.index }}</div>
+                <img src="{{ photo.src }}" alt="{{ photo.label }}" loading="lazy"/>
+                <div class="photo-overlay"><button class="photo-del-btn" onclick="deleteGalleryPhoto('{{ photo.src }}',this.closest('.gallery-photo-item'))"><i class="fas fa-trash"></i> Remove</button></div>
+                <div class="photo-label-tag">{{ photo.label }}</div>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="gallery-empty" id="galleryEmpty"><i class="fas fa-images"></i>No photos yet. Upload some above.</div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="tab-content" id="tab-reviews">
+    <div class="card">
+      <div class="card-title">Pending Reviews <span>Need approval before showing on website</span></div>
+      <div class="item-list">
+        {% for r in data.reviews %}{% if not r.approved %}
+        <div class="review-item" id="review-{{ loop.index0 }}">
+          <div class="item-content">
+            <div class="item-name">{{ r.name }} <span class="status-badge status-pending-review">Pending</span></div>
+            <div class="item-meta">{{ r.type|title }} · ⭐ ×{{ r.rating }} · {{ r.date }}</div>
+            <div class="item-text">{{ r.text }}</div>
+          </div>
+          <div class="item-actions">
+            <button class="btn btn-success btn-sm" onclick="reviewAction({{ loop.index0 }},'approve',this)"><i class="fas fa-check"></i> Approve</button>
+            <button class="btn btn-danger btn-sm" onclick="reviewAction({{ loop.index0 }},'delete',this)"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        {% endif %}{% endfor %}
+        {% if data.reviews|selectattr('approved','equalto',False)|list|length == 0 %}<div class="empty-state"><i class="fas fa-check-circle"></i>All reviews processed!</div>{% endif %}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Approved Reviews <span>Showing on website</span></div>
+      <div class="item-list">
+        {% for r in data.reviews %}{% if r.approved %}
+        <div class="review-item">
+          <div class="item-content">
+            <div class="item-name">{{ r.name }} <span class="status-badge badge-green">Live</span></div>
+            <div class="item-meta">{{ r.type|title }} · ⭐ ×{{ r.rating }} · {{ r.date }}</div>
+            <div class="item-text">{{ r.text }}</div>
+          </div>
+          <div class="item-actions"><button class="btn btn-danger btn-sm" onclick="reviewAction({{ loop.index0 }},'delete',this)"><i class="fas fa-trash"></i></button></div>
+        </div>
+        {% endif %}{% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPLAINTS -->
+  <div class="tab-content" id="tab-complaints">
+    <div class="card">
+      <div class="card-title">Complaints <span>Resolve within 24 hours</span></div>
+      {% if data.complaints %}
+      <div class="item-list">
+        {% for c in data.complaints %}
+        <div class="complaint-item" id="complaint-{{ c.id }}">
+          <div class="item-content">
+            <div class="item-name">{{ c.name }} — <em style="font-weight:300;color:var(--stone)">{{ c.category }}</em></div>
+            <div class="item-meta">{{ c.date }} · <span class="status-badge {{ 'status-resolved' if c.status=='resolved' else 'status-pending' }}">{{ c.status|title }}</span></div>
+            <div class="item-text">{{ c.message }}</div>
+          </div>
+          {% if c.status == 'pending' %}<div class="item-actions"><button class="btn btn-success btn-sm" onclick="resolveComplaint({{ c.id }},this)"><i class="fas fa-check"></i> Resolve</button></div>{% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}<div class="empty-state"><i class="fas fa-smile"></i>No complaints yet — great job!</div>{% endif %}
+    </div>
+  </div>
+
+  <!-- ENQUIRIES -->
+  <div class="tab-content" id="tab-enquiries">
+    <div class="card">
+      <div class="card-title">Booking Enquiries <span>{{ data.enquiries|length }} total</span></div>
+      {% if data.enquiries %}
+      <div style="overflow-x:auto;">
+        <table class="enquiry-table">
+          <tr><th>#</th><th>Name</th><th>Phone</th><th>Email</th><th>Room Type</th><th>Message</th><th>Date</th></tr>
+          {% for e in data.enquiries|reverse %}
+          <tr>
+            <td style="color:var(--stone-light)">{{ e.id }}</td>
+            <td><strong>{{ e.name }}</strong></td>
+            <td><a href="tel:{{ e.phone }}" style="color:var(--tc);text-decoration:none;">{{ e.phone }}</a></td>
+            <td style="font-weight:300">{{ e.email or '—' }}</td>
+            <td>{{ e.room_type or '—' }}</td>
+            <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:300;color:var(--stone-dark)">{{ e.message or '—' }}</td>
+            <td style="font-weight:300;color:var(--stone)">{{ e.date }}</td>
+          </tr>
+          {% endfor %}
+        </table>
+      </div>
+      {% else %}<div class="empty-state"><i class="fas fa-inbox"></i>No enquiries yet.</div>{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MAX_PHOTOS = 20;
+
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+
+function showTab(name, el){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(el) el.classList.add('active');
+  if(name==='gallery') refreshGalleryLimit();
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('show');
+}
+
+function showToast(msg, ok=true){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.borderLeftColor=ok?'var(--tc)':'#c44';
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+async function updateRooms(){
+  const fd=new FormData(document.getElementById('roomForm'));
+  const r=await fetch('/admin/update_rooms',{method:'POST',body:fd});
+  const d=await r.json();
+  showToast(d.success?'Occupancy updated.':'Failed to update.',d.success);
+  if(d.success) location.reload();
+}
+
+async function regenerateMenu(){
+  const r=await fetch('/admin/regenerate_menu',{method:'POST'});
+  const d=await r.json();
+  if(d.success){Object.entries(d.menu).forEach(([meal,dish])=>{const el=document.getElementById('menu-'+meal);if(el)el.textContent=dish;});showToast('Menu regenerated.');}
+}
+
+async function addDish(meal){
+  const inp=document.getElementById('newDish-'+meal);const dish=inp.value.trim();if(!dish)return;
+  const fd=new FormData();fd.append('meal',meal);fd.append('dish',dish);
+  const r=await fetch('/admin/add_dish',{method:'POST',body:fd});const d=await r.json();
+  if(d.success){const list=document.getElementById('dishList-'+meal);const item=document.createElement('div');item.className='dish-item';item.innerHTML=`<span>${dish}</span><button onclick="removeDish('${meal}','${dish}',this.closest('.dish-item'))">✕</button>`;list.appendChild(item);inp.value='';showToast('Dish added.');}
+}
+async function removeDish(meal,dish,el){
+  const fd=new FormData();fd.append('meal',meal);fd.append('dish',dish);
+  const r=await fetch('/admin/remove_dish',{method:'POST',body:fd});const d=await r.json();
+  if(d.success){el.remove();showToast('Dish removed.');}
+}
+
+async function reviewAction(idx,action,btn){
+  const fd=new FormData();fd.append('idx',idx);fd.append('action',action);
+  const r=await fetch('/admin/review_action',{method:'POST',body:fd});const d=await r.json();
+  if(d.success){showToast(action==='approve'?'Review approved.':'Review deleted.');setTimeout(()=>location.reload(),900);}
+}
+
+async function resolveComplaint(id,btn){
+  const fd=new FormData();fd.append('id',id);
+  const r=await fetch('/admin/resolve_complaint',{method:'POST',body:fd});const d=await r.json();
+  if(d.success){const badge=document.querySelector(`#complaint-${id} .status-badge`);if(badge){badge.textContent='Resolved';badge.className='status-badge status-resolved';}btn.closest('.item-actions').remove();showToast('Complaint resolved.');}
+}
+
+/* ── GALLERY ── */
+function getGalleryCount(){return document.querySelectorAll('#galleryGrid .gallery-photo-item').length;}
+
+function refreshGalleryLimit(){
+  const count=getGalleryCount(), pct=Math.round((count/MAX_PHOTOS)*100);
+  document.getElementById('limitCircle')?.style.setProperty('--pct',pct);
+  const countEl=document.getElementById('limitCount'), labelEl=document.getElementById('limitLabel');
+  const descEl=document.getElementById('limitDesc'), noteEl=document.getElementById('uploadLimitNote');
+  const zone=document.getElementById('uploadZone'), inp=document.getElementById('photoUploadInput');
+  if(countEl) countEl.textContent=count;
+  if(labelEl) labelEl.textContent=`${count} / ${MAX_PHOTOS} photos`;
+  const rem=MAX_PHOTOS-count;
+  if(descEl) descEl.textContent=rem>0?`${rem} more photo${rem===1?'':'s'} can be added`:'Gallery full — remove a photo to add more.';
+  if(noteEl){noteEl.textContent=rem>0?`You can add up to ${rem} more photo${rem===1?'':'s'}`:'Limit reached (20/20). Remove photos to add new ones.';noteEl.style.color=rem===0?'#c44':'var(--tc)';}
+  if(zone) zone.style.opacity=rem===0?'0.5':'1';
+  if(inp) inp.disabled=rem===0;
+  updateOrderBadges();
+}
+
+async function handlePhotoUpload(input){
+  const files=Array.from(input.files);if(!files.length)return;
+  const rem=MAX_PHOTOS-getGalleryCount();
+  if(rem<=0){showToast('Gallery is full. Remove photos first.',false);input.value='';return;}
+  const toUpload=files.slice(0,rem);
+  if(files.length>rem) showToast(`Only ${rem} slot${rem===1?'':'s'} left. Uploading first ${rem}.`,false);
+  for(const file of toUpload){
+    if(file.size>5*1024*1024){showToast(`${file.name} exceeds 5MB.`,false);continue;}
+    const fd=new FormData();fd.append('photo',file);fd.append('label',file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' '));
+    try{const r=await fetch('/admin/upload_gallery_photo',{method:'POST',body:fd});const d=await r.json();if(d.success){addPhotoToGrid(d.src,d.label);refreshGalleryLimit();}else showToast(d.message||'Upload failed.',false);}
+    catch{showToast('Upload error.',false);}
+  }
+  input.value='';
+  showToast(`${Math.min(toUpload.length,rem)} photo${toUpload.length===1?'':'s'} uploaded.`);
+}
+
+function addPhotoToGrid(src,label){
+  const empty=document.getElementById('galleryEmpty');if(empty)empty.remove();
+  const grid=document.getElementById('galleryGrid');
+  const item=document.createElement('div');item.className='gallery-photo-item';item.draggable=true;item.dataset.src=src;item.dataset.label=label;
+  item.innerHTML=`<div class="drag-handle"><i class="fas fa-grip-vertical"></i></div><div class="order-badge">—</div><img src="${src}" alt="${label}" loading="lazy" style="width:100%;height:100px;object-fit:cover;display:block;pointer-events:none;"/><div class="photo-overlay"><button class="photo-del-btn" onclick="deleteGalleryPhoto('${src}',this.closest('.gallery-photo-item'))"><i class="fas fa-trash"></i> Remove</button></div><div class="photo-label-tag">${label}</div>`;
+  grid.appendChild(item);initDragItem(item);
+}
+
+async function deleteGalleryPhoto(src,el){
+  if(!confirm('Remove this photo from the gallery?'))return;
+  const fd=new FormData();fd.append('src',src);
+  try{const r=await fetch('/admin/delete_gallery_photo',{method:'POST',body:fd});const d=await r.json();
+    if(d.success){el.remove();const grid=document.getElementById('galleryGrid');if(!grid.querySelector('.gallery-photo-item')){const empty=document.createElement('div');empty.id='galleryEmpty';empty.className='gallery-empty';empty.innerHTML='<i class="fas fa-images"></i>No photos yet. Upload some above.';grid.appendChild(empty);}refreshGalleryLimit();showToast('Photo removed.');}
+  }catch{showToast('Failed to remove photo.',false);}
+}
+
+/* DRAG AND DROP REORDER */
+let dragSrc=null;
+function initDragItem(item){
+  item.addEventListener('dragstart',function(e){dragSrc=this;this.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.dataTransfer.setData('text/plain',this.dataset.src);});
+  item.addEventListener('dragover',function(e){e.preventDefault();e.dataTransfer.dropEffect='move';if(this!==dragSrc)this.classList.add('drag-over');});
+  item.addEventListener('dragleave',function(){this.classList.remove('drag-over');});
+  item.addEventListener('drop',function(e){
+    e.stopPropagation();e.preventDefault();this.classList.remove('drag-over');
+    if(dragSrc&&this!==dragSrc){
+      const grid=document.getElementById('galleryGrid');
+      const items=[...grid.querySelectorAll('.gallery-photo-item')];
+      if(items.indexOf(dragSrc)<items.indexOf(this)) grid.insertBefore(dragSrc,this.nextSibling);
+      else grid.insertBefore(dragSrc,this);
+      updateOrderBadges();showSaveOrderBtn(true);
+    }
+  });
+  item.addEventListener('dragend',function(){this.classList.remove('dragging');document.querySelectorAll('.gallery-photo-item').forEach(i=>i.classList.remove('drag-over'));});
+}
+
+function updateOrderBadges(){document.querySelectorAll('#galleryGrid .gallery-photo-item').forEach((item,i)=>{const b=item.querySelector('.order-badge');if(b)b.textContent=i+1;});}
+function showSaveOrderBtn(show){const btn=document.getElementById('saveOrderBtn');if(btn)btn.classList.toggle('visible',show);}
+
+async function saveOrder(){
+  const order=[...document.querySelectorAll('#galleryGrid .gallery-photo-item')].map(i=>i.dataset.src);
+  try{const r=await fetch('/admin/reorder_gallery',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({order})});const d=await r.json();if(d.success){showSaveOrderBtn(false);showToast('Order saved — website updated!');}}
+  catch{showToast('Failed to save order.',false);}
+}
+
+/* Upload zone drag-and-drop */
+const uz=document.getElementById('uploadZone');
+if(uz){
+  uz.addEventListener('dragover',e=>{e.preventDefault();uz.classList.add('dragover');});
+  uz.addEventListener('dragleave',()=>uz.classList.remove('dragover'));
+  uz.addEventListener('drop',e=>{
+    e.preventDefault();uz.classList.remove('dragover');
+    const inp=document.getElementById('photoUploadInput');const dt=e.dataTransfer;
+    if(dt&&dt.files.length){const fi=new DataTransfer();Array.from(dt.files).forEach(f=>fi.items.add(f));inp.files=fi.files;handlePhotoUpload(inp);}
+  });
+}
+
+window.addEventListener('load',()=>{refreshGalleryLimit();document.querySelectorAll('#galleryGrid .gallery-photo-item').forEach(initDragItem);});
+</script>
+</body>
+</html>

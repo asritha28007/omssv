@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin Login – OM SSV Girls Hostel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Tenor+Sans&family=Jost:wght@200;300;400;500&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root{
+  --tc:#8B4A3A;--tc-deep:#6B3028;--tc-light:#D4927E;--tc-pale:#F5DDD6;
+  --sand:#E8DDD0;--sand-light:#F5EFE8;
+  --linen:#FAF7F2;--linen-dark:#F0E8DF;
+  --stone:#8C8078;--stone-dark:#5C5048;
+  --ink:#2A2018;--ink-soft:#4A3828;
+  --gold:#C4956A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  font-family:'Jost',sans-serif;
+  min-height:100vh;
+  display:flex;
+  background:var(--linen-dark);
+  overflow:hidden;
+}
+
+/* ── LEFT PANEL — decorative ── */
+.left-panel{
+  flex:1;
+  display:none;
+  position:relative;
+  background:var(--ink);
+  overflow:hidden;
+}
+
+/* Aurora orbs matching index.html */
+.ao{position:absolute;border-radius:50%;mix-blend-mode:screen;filter:blur(80px);opacity:0.18;pointer-events:none;}
+.ao1{width:500px;height:500px;background:#C87858;top:-100px;right:-80px;animation:aoFloat1 12s ease-in-out infinite;}
+.ao2{width:380px;height:380px;background:#9A8870;bottom:-60px;left:-40px;animation:aoFloat2 15s ease-in-out infinite;}
+.ao3{width:300px;height:300px;background:#8A9880;top:40%;left:30%;animation:aoFloat1 10s ease-in-out infinite 3s;}
+@keyframes aoFloat1{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(30px,-40px) scale(1.1);}}
+@keyframes aoFloat2{0%,100%{transform:translate(0,0);}50%{transform:translate(-25px,35px) scale(1.08);}}
+
+/* Grain texture */
+.grain{
+  position:absolute;inset:0;pointer-events:none;opacity:0.04;z-index:1;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat:repeat;background-size:128px;
+}
+
+.left-content{
+  position:relative;z-index:2;
+  height:100%;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  padding:48px;
+}
+.left-brand{display:flex;align-items:center;gap:14px;}
+.left-stamp{
+  width:44px;height:44px;background:var(--tc);
+  display:flex;align-items:center;justify-content:center;
+}
+.left-stamp span{font-family:'Libre Baskerville',serif;font-size:16px;font-weight:700;color:white;}
+.left-brand-words{}
+.left-brand-name{font-family:'Tenor Sans',sans-serif;font-size:13px;color:rgba(232,220,208,0.9);letter-spacing:1.5px;text-transform:uppercase;}
+.left-brand-sub{font-size:10px;color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;font-weight:300;margin-top:2px;}
+
+.left-quote{margin-top:auto;}
+.left-quote blockquote{
+  font-family:'Libre Baskerville',serif;
+  font-size:clamp(22px,2.5vw,32px);
+  font-weight:400;font-style:italic;
+  color:rgba(232,220,208,0.85);
+  line-height:1.45;
+  margin-bottom:20px;
+}
+.left-quote cite{
+  font-family:'Jost',sans-serif;font-size:11px;font-weight:300;
+  color:rgba(255,255,255,0.35);letter-spacing:2px;text-transform:uppercase;
+}
+
+/* Decorative polaroid in corner */
+.left-polaroid{
+  position:absolute;bottom:48px;right:40px;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  padding:10px 10px 32px;
+  transform:rotate(-3deg);
+  width:140px;
+  opacity:0.5;
+}
+.left-polaroid div{
+  width:100%;height:90px;
+  background:linear-gradient(135deg,rgba(200,120,88,0.3),rgba(154,136,112,0.2));
+}
+.left-polaroid span{
+  display:block;text-align:center;margin-top:8px;
+  font-family:'Libre Baskerville',serif;font-size:11px;
+  font-style:italic;color:rgba(255,255,255,0.3);
+}
+
+/* ── RIGHT PANEL — login form ── */
+.right-panel{
+  width:100%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:40px 24px;
+  background:var(--linen);
+  position:relative;
+  overflow-y:auto;
+}
+
+/* subtle top stripe */
+.right-panel::before{
+  content:'';position:absolute;top:0;left:0;right:0;
+  height:3px;background:var(--tc);
+}
+
+.login-box{
+  width:100%;max-width:400px;
+}
+
+/* Logo / heading */
+.login-logo{
+  display:flex;flex-direction:column;align-items:center;
+  margin-bottom:48px;text-align:center;
+}
+.login-stamp{
+  width:52px;height:52px;background:var(--tc);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;
+}
+.login-stamp span{font-family:'Libre Baskerville',serif;font-size:20px;font-weight:700;color:white;}
+.login-eyebrow{
+  font-family:'Jost',sans-serif;font-size:10px;font-weight:500;
+  letter-spacing:4px;text-transform:uppercase;color:var(--stone);
+  margin-bottom:10px;display:flex;align-items:center;gap:12px;
+}
+.login-eyebrow::before,.login-eyebrow::after{content:'';flex:0 0 24px;height:1px;background:var(--stone);opacity:0.4;}
+.login-heading{
+  font-family:'Libre Baskerville',serif;
+  font-size:28px;font-weight:400;color:var(--ink);
+  margin-bottom:6px;
+}
+.login-sub{font-size:13px;color:var(--stone);font-weight:300;letter-spacing:0.3px;}
+
+/* Error */
+.error-msg{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(139,74,58,0.06);
+  border:1px solid rgba(139,74,58,0.25);
+  border-left:2px solid var(--tc);
+  color:var(--tc-deep);
+  padding:12px 16px;
+  font-size:13px;font-weight:300;
+  margin-bottom:24px;
+  letter-spacing:0.2px;
+}
+
+/* Form */
+.form-group{margin-bottom:20px;}
+.form-group label{
+  display:block;
+  font-family:'Jost',sans-serif;font-size:10px;font-weight:500;
+  letter-spacing:1.5px;text-transform:uppercase;color:var(--stone);
+  margin-bottom:8px;
+}
+.input-wrap{position:relative;}
+.input-wrap input{
+  width:100%;
+  padding:13px 44px 13px 44px;
+  border:1px solid rgba(200,184,168,0.5);
+  background:white;
+  font-size:14px;font-family:'Jost',sans-serif;font-weight:300;
+  color:var(--ink);outline:none;
+  transition:all 0.25s;
+  -webkit-appearance:none;
+}
+.input-wrap input:focus{
+  border-color:var(--tc);
+  box-shadow:0 0 0 3px rgba(139,74,58,0.07);
+}
+.input-wrap input::placeholder{color:var(--stone);opacity:0.6;}
+.input-icon{
+  position:absolute;left:14px;top:50%;transform:translateY(-50%);
+  color:var(--stone);font-size:14px;pointer-events:none;
+}
+.toggle-pass{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  cursor:pointer;color:var(--stone);font-size:13px;
+  transition:color 0.2s;padding:4px;
+}
+.toggle-pass:hover{color:var(--tc);}
+
+/* Submit button — wipe-up effect matching index.html */
+.btn-login{
+  width:100%;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  padding:14px;
+  background:var(--tc);color:white;
+  border:1px solid var(--tc);
+  font-family:'Jost',sans-serif;font-size:12px;font-weight:500;
+  letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:color 0.3s;
+  margin-top:8px;
+}
+.btn-login::before{
+  content:'';position:absolute;inset:0;
+  background:var(--tc-deep);
+  transform:translateY(100%);
+  transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);
+  z-index:0;
+}
+.btn-login:hover::before{transform:translateY(0);}
+.btn-login > *{position:relative;z-index:1;}
+
+/* Back link */
+.back-link{
+  text-align:center;margin-top:32px;
+}
+.back-link a{
+  font-family:'Jost',sans-serif;font-size:12px;font-weight:400;
+  color:var(--stone);text-decoration:none;letter-spacing:0.5px;
+  display:inline-flex;align-items:center;gap:7px;
+  transition:color 0.2s;
+}
+.back-link a:hover{color:var(--tc);}
+
+/* Secure note */
+.secure-note{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-top:24px;
+  font-family:'Jost',sans-serif;font-size:11px;font-weight:300;
+  color:var(--stone);letter-spacing:0.5px;
+}
+.secure-dot{width:5px;height:5px;background:var(--sage, #7A8C72);border-radius:50%;flex-shrink:0;}
+
+/* ── RESPONSIVE ── */
+/* Show split layout on wider screens */
+@media(min-width:900px){
+  .left-panel{display:flex;flex-direction:column;}
+  .right-panel{width:460px;flex-shrink:0;}
+}
+@media(min-width:1200px){
+  .right-panel{width:520px;}
+}
+
+/* Mobile tweaks */
+@media(max-width:480px){
+  .right-panel{padding:32px 20px;}
+  .login-logo{margin-bottom:36px;}
+  .login-heading{font-size:24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LEFT — decorative split panel (desktop only) -->
+<div class="left-panel">
+  <div class="ao ao1"></div>
+  <div class="ao ao2"></div>
+  <div class="ao ao3"></div>
+  <div class="grain"></div>
+  <div class="left-content">
+    <div class="left-brand">
+      <div class="left-stamp"><span>OM</span></div>
+      <div class="left-brand-words">
+        <div class="left-brand-name">OM SSV Girls Hostel</div>
+        <div class="left-brand-sub">Block 2 · Est. 2024</div>
+      </div>
+    </div>
+    <div class="left-quote">
+      <blockquote>"A safe, homely space<br>where every girl thrives."</blockquote>
+      <cite>— OM SSV Girls Hostel</cite>
+    </div>
+  </div>
+  <div class="left-polaroid">
+    <div></div>
+    <span>Our home ♡</span>
+  </div>
+</div>
+
+<!-- RIGHT — login form -->
+<div class="right-panel">
+  <div class="login-box">
+
+    <div class="login-logo">
+      <div class="login-stamp"><span>OM</span></div>
+      <div class="login-eyebrow">Admin Access</div>
+      <h1 class="login-heading">Welcome Back</h1>
+      <p class="login-sub">OM SSV Girls Hostel – Block 2</p>
+    </div>
+
+    {% if error %}
+    <div class="error-msg">
+      <i class="fas fa-exclamation-circle"></i>
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label>Admin Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock input-icon"></i>
+          <input
+            type="password"
+            name="password"
+            id="passInput"
+            placeholder="Enter admin password"
+            autofocus
+            required
+          />
+          <i class="fas fa-eye toggle-pass" id="togglePass" onclick="togglePassword()"></i>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login">
+        <i class="fas fa-sign-in-alt"></i>
+        <span>Login to Dashboard</span>
+      </button>
+    </form>
+
+    <div class="secure-note">
+      <div class="secure-dot"></div>
+      Secure admin access only
+      <div class="secure-dot"></div>
+    </div>
+
+    <div class="back-link">
+      <a href="/"><i class="fas fa-arrow-left"></i> Back to Website</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function togglePassword(){
+  const i=document.getElementById('passInput');
+  const e=document.getElementById('togglePass');
+  if(i.type==='password'){
+    i.type='text';
+    e.className='fas fa-eye-slash toggle-pass';
+  } else {
+    i.type='password';
+    e.className='fas fa-eye toggle-pass';
+  }
+}
+</script>
+</body>
+</html>
