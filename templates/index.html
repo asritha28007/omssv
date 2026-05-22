@@ -441,11 +441,11 @@ footer{background:#1A0A0A;color:rgba(255,255,255,0.7);padding:72px 40px 28px;}
     <div class="rooms-grid" id="roomsGrid">
       {% set room_info = {
         '3_sharing_ac':    {'label':'3 Sharing – AC','price':'₹10,500','sharing':'3','ac':'ac','features':['Air Conditioned','Attached Bathroom','Study Table','Wardrobe']},
-        '3_sharing_nonac': {'label':'3 Sharing – Non AC','price':'₹7,500','sharing':'3','ac':'nonac','features':['Ceiling Fan','Common Bathroom','Study Table','Wardrobe']},
+        '3_sharing_nonac': {'label':'3 Sharing – Non AC','price':'₹9,500','sharing':'3','ac':'nonac','features':['Ceiling Fan','Common Bathroom','Study Table','Wardrobe']},
         '4_sharing_ac':    {'label':'4 Sharing – AC','price':'₹10,000','sharing':'4','ac':'ac','features':['Air Conditioned','Attached Bathroom','Study Area','Storage']},
-        '4_sharing_nonac': {'label':'4 Sharing – Non AC','price':'₹7,500','sharing':'4','ac':'nonac','features':['Ceiling Fan','Common Bathroom','Study Area','Storage']},
-        '5_sharing_ac':    {'label':'5 Sharing – AC','price':'₹7,000','sharing':'5','ac':'ac','features':['Air Conditioned','Common Bathroom','Study Table','Locker']},
-        '5_sharing_nonac': {'label':'5 Sharing – Non AC','price':'₹6,500','sharing':'5','ac':'nonac','features':['Ceiling Fan','Common Bathroom','Study Table','Locker']},
+        '4_sharing_nonac': {'label':'4 Sharing – Non AC','price':'₹8,000','sharing':'4','ac':'nonac','features':['Ceiling Fan','Common Bathroom','Study Area','Storage']},
+        '5_sharing_ac':    {'label':'5 Sharing – AC','price':'₹10,000','sharing':'5','ac':'ac','features':['Air Conditioned','Common Bathroom','Study Table','Locker']},
+        '5_sharing_nonac': {'label':'5 Sharing – Non AC','price':'₹7,500','sharing':'5','ac':'nonac','features':['Ceiling Fan','Common Bathroom','Study Table','Locker']},
       } %}
       {% for key, info in room_info.items() %}
       {% set room = rooms[key] %}{% set vacant = vacancies[key] %}{% set pct = (room.occupied / room.total * 100)|int %}
