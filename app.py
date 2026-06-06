@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, Response
 import json, os, random
 from datetime import datetime, date
 from functools import wraps
@@ -102,6 +102,25 @@ def api_vacancies():
 def api_menu():
     d = load_data()
     return jsonify(get_today_menu(d))
+# ← ADD HERE ↓
+
+@app.route("/robots.txt")
+def robots():
+    content = """User-agent: *
+Allow: /
+Sitemap: https://yourdomain.com/sitemap.xml"""
+    return Response(content, mimetype="text/plain")
+
+@app.route("/sitemap.xml")
+def sitemap():
+    content = """<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://yourdomain.com/</loc>
+    <priority>1.0</priority>
+  </url>
+</urlset>"""
+    return Response(content, mimetype="application/xml")
 
 @app.route("/submit_review", methods=["POST"])
 def submit_review():
